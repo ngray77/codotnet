@@ -2,7 +2,7 @@ public interface IAdapter
 {
     public Model GetModel(string recordType);
     public void PushEvent(RecordChange rc);
-    
+
     public void ClearDirty();
 }
 
@@ -29,8 +29,9 @@ public class FakeXLIOAdapter : IAdapter
         var result = new List<RecordChange>();
         var dr = GetDirtyRecords(recordType);
         foreach (var r in dr)
-            result.Add(new RecordChange(null, StaticSequence.next(), r.Body, recordType));
-
+        {
+            result.Add(new RecordChange(null, EventSequence.next(), r, recordType));
+        }
         return result;
     }
 
@@ -47,7 +48,7 @@ public class FakeXLIOAdapter : IAdapter
 
     public void PushEvent(RecordChange rc)
     {
-        var r = new Record { Id = rc.Id, Body = rc.Body, ParentId = rc.ParentEventId };
-        GetModel(rc.RecordType).Records.Add(r);
+        //var r = new Record { Id = rc.Id, Body = rc.Body, ParentId = rc.ParentEventId };
+        GetModel(rc.RecordType).Records.Add(rc.ChangedRecord);
     }
 }

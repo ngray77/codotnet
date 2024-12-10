@@ -47,17 +47,17 @@ public class Engine
 
     public void Run()
     {
-        RecordChange r;
+        RecordChange rc;
         while (eventManager.Events.Count > 0)
         {
             // Emit to console
-            r = eventManager.Events.Dequeue();
-            Console.WriteLine(r.Body + " [" + r.RecordType + ", Id " + r.Id + " child of " + r.ParentEventId + "]");
+            rc = eventManager.Events.Dequeue();
+            Console.WriteLine(rc.ChangedRecord.Body + " [" + rc.RecordType + " Id " + rc.ChangedRecord.Id + "]");
 
             // Find subscribing plugins to the event
             var subscribers = engineConfig.RegisteredRecordTypes.FindAll(
                 rp => rp.TriggeredBy.Exists(
-                    tb => tb.RecordType == r.RecordType
+                    tb => tb.RecordType == rc.RecordType
                     )
                 );
 
@@ -65,15 +65,14 @@ public class Engine
             {
                 // Run each plugin
                 FakePlugin fp = new FakePlugin(sub);
-                var newRCs = fp.Process(r);
+                var newRCs = fp.Process(rc);
 
                 while (newRCs.Count > 0)
                 {
                     // Publish new returned events to the queue
-                    var rc = newRCs[0];
-                    newRCs.Remove(rc);
-                    this.EnqueueEvent(rc);
-                    //eventManager.Events.Enqueue(rc);
+                    var newRC = newRCs[0];
+                    newRCs.Remove(newRC);
+                    this.EnqueueEvent(newRC);
                 }
             }
         }

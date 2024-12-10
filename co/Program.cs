@@ -29,7 +29,7 @@ fakeXL.FakeFileData.Add(new Model(stuffRd.RecordType));
 Engine eng = new Engine(cfg);
 cfg.RegisteredAdapters.Add(fakeXL);
 
-var r = new Record { Body = "Put a man on the moon", Id = 1 };
+var r = new Record { Body = "Put a man on the moon", Id = RecordSequence.next() };
 fakeXL.GetModel(goalRd.RecordType).Records.Add(r);
 
 var chg = fakeXL.GetRecordChangeEvents(goalRd.RecordType);
@@ -38,9 +38,8 @@ foreach(var c in chg)
 eng.Run();
 cfg.RegisteredAdapters.ForEach(ra=>ra.ClearDirty());
 
-Console.WriteLine("-----------");
 
-// Retrigger the engine by changing one record
+Console.WriteLine("-----Retrigger the engine by changing one record------");
 fakeXL.GetModel(needRd.RecordType).Records.First().Body = "A little tweak";
 var chg2 = fakeXL.GetRecordChangeEvents(needRd.RecordType);
 foreach(var c in chg2)

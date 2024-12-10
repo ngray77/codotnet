@@ -19,12 +19,17 @@ public class FakePlugin
         // to the upstream change, within reason
         List<RecordChange> changes = new List<RecordChange>();
         int qty = Math.Min(Math.Max(1, ((new Random()).Next() % 3) + 1), 3);
-        while (qty-- > 0 && c.Body.Length < 50)
+        while (qty-- > 0 && c.ChangedRecord.Body.Length < 50)
         {
+            var newRec = new Record();
+            newRec.Id = RecordSequence.next();
+            newRec.ParentId = c.ChangedRecord.Id;
+            newRec.Body = " " + c.ChangedRecord.Body + ":" + qty.ToString();
+
             RecordChange newChg = new RecordChange(
-                c.Id,
-                id: StaticSequence.next(),
-                body: " " + c.Body + ":" + qty.ToString(),
+                parentEventId: c.EventId,
+                eventId: EventSequence.next(),
+                changedRecord: newRec,
                 recordType: recordDefinition.RecordType
             );
             changes.Add(newChg);
