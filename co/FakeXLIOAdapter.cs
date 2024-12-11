@@ -48,7 +48,9 @@ public class FakeXLIOAdapter : IAdapter
 
     public void PushEvent(RecordChange rc)
     {
-        //var r = new Record { Id = rc.Id, Body = rc.Body, ParentId = rc.ParentEventId };
-        GetModel(rc.RecordType).Records.Add(rc.ChangedRecord);
+        var recs = GetModel(rc.RecordType).Records;
+        var matchingRec = recs.Find(r => r.Id == rc.ChangedRecord.Id);
+        if (matchingRec == null)
+            recs.Add(rc.ChangedRecord);
     }
 }

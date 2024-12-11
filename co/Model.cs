@@ -7,6 +7,14 @@ public class Model
         Records = new List<Record>();
     }
     public List<Record> Records {get;}
+
+    public void PrettyConsole()
+    {
+        var header = $"| {"Body",-50} | {"Id",4} | {"PId",4} | {"Dirty",5}";
+        Console.WriteLine( ""+Name.PadRight(header.Length,'-'));
+        Console.WriteLine(header);
+        Records.ForEach(r=>Console.WriteLine($"| {r.Body,-50} | {r.Id,4} | {r.ParentId,4} | {r.IsDirty,-5}"));
+    }
 }
 
 public class Record

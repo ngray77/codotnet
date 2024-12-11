@@ -52,7 +52,7 @@ public class Engine
         {
             // Emit to console
             rc = eventManager.Events.Dequeue();
-            Console.WriteLine(rc.ChangedRecord.Body + " [" + rc.RecordType + " Id " + rc.ChangedRecord.Id + "]");
+            //Console.WriteLine(rc.ChangedRecord.Body + " [" + rc.RecordType + " Id " + rc.ChangedRecord.Id + "]");
 
             // Find subscribing plugins to the event
             var subscribers = engineConfig.RegisteredRecordTypes.FindAll(

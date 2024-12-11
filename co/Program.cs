@@ -25,23 +25,28 @@ fakeXL.FakeFileData.Add(new Model(prefRd.RecordType));
 fakeXL.FakeFileData.Add(new Model(needRd.RecordType));
 fakeXL.FakeFileData.Add(new Model(stuffRd.RecordType));
 
-// Init a starting goal
+// Init the engine and adapter
 Engine eng = new Engine(cfg);
 cfg.RegisteredAdapters.Add(fakeXL);
 
-var r = new Record { Body = "Put a man on the moon", Id = RecordSequence.next() };
-fakeXL.GetModel(goalRd.RecordType).Records.Add(r);
+// Init a starting goal
+var newGoal = new Record { Body = "Put a man on the moon", Id = RecordSequence.next() };
+fakeXL.GetModel(goalRd.RecordType).Records.Add(newGoal);
+Console.WriteLine("\nThis is an Initial Starting 'Goal', the only data in the set".PadRight(100, '*'));
+fakeXL.FakeFileData.ForEach(m => m.PrettyConsole());
 
-var chg = fakeXL.GetRecordChangeEvents(goalRd.RecordType);
-foreach(var c in chg)
-    eng.EnqueueEvent(c);
+// Run the engine for the starting goal
+fakeXL.GetRecordChangeEvents(goalRd.RecordType).ForEach(c => eng.EnqueueEvent(c));
 eng.Run();
-cfg.RegisteredAdapters.ForEach(ra=>ra.ClearDirty());
+cfg.RegisteredAdapters.ForEach(ra => ra.ClearDirty());
+Console.WriteLine("\nAnd here is the Result after the engine runs, a fully populated model".PadRight(100, '*'));
+fakeXL.FakeFileData.ForEach(m => m.PrettyConsole());
 
-
-Console.WriteLine("-----Retrigger the engine by changing one record------");
+// Retrigger the engine by changing one record
+Console.WriteLine("\nRetrigger the engine by changing one record".PadRight(100, '*'));
 fakeXL.GetModel(needRd.RecordType).Records.First().Body = "A little tweak";
-var chg2 = fakeXL.GetRecordChangeEvents(needRd.RecordType);
-foreach(var c in chg2)
-    eng.EnqueueEvent(c);
+fakeXL.GetRecordChangeEvents(needRd.RecordType).ForEach(c => eng.EnqueueEvent(c));
+fakeXL.FakeFileData.ForEach(m => m.PrettyConsole());
 eng.Run();
+Console.WriteLine("\nAnd the result of the 'Retrigger' after the engine runs".PadRight(100, '*'));
+fakeXL.FakeFileData.ForEach(m => m.PrettyConsole());
